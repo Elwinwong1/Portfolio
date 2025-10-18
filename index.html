@@ -161,21 +161,31 @@
       </div>
     </section>
 
-    <!-- JS：点击时弹出确认提示 -->
-    <script>
-      function confirmDownload() {
-        const confirmed = confirm("Do you want to download this resume?");
-        if (confirmed) {
-          // 用户按下“确定” → 触发下载
-          const link = document.createElement("a");
-          link.href = "assets/ElwinWong_Resume.pdf";
-          link.download = "ElwinWong_Resume.pdf";
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-      }
-    </script>
+   <!-- JS：点击时弹出确认提示 -->
+<script>
+function confirmDownload() {
+  const confirmed = confirm("Do you want to download this resume?");
+  if (confirmed) {
+    // ✅ 使用 fetch + blob 确保文件名生效
+    fetch("assets/ElwinWong_Resume.pdf")
+      .then(response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "ElwinWong_Resume.pdf"; // ✅ 下载后的文件名
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch(error => {
+        console.error("Download failed:", error);
+        alert("Sorry, the download could not be completed.");
+      });
+  }
+}
+</script>
 
 
     <hr class="m-0" />
